@@ -1,0 +1,181 @@
+Atlas atlas-hlruvh-shard-0 [primary] shopDB> use companyDB
+| 
+| db.employees.insertMany([
+|   {
+|     _id: 1,
+|     name: "Anil",
+|     dept: "IT",
+|     city: "Chennai",
+|     salary: 60000,
+|     skills: ["MongoDB", "Python"]
+|   },
+|   {
+|     _id: 2,
+|     name: "Bhavna",
+|     dept: "HR",
+|     city: "Mumbai",
+|     salary: 45000,
+|     skills: ["Excel", "Communication"]
+|   },
+|   {
+|     _id: 3,
+|     name: "Charan",
+|     dept: "IT",
+|     city: "Chennai",
+|     salary: 75000,
+|     skills: ["Java", "MongoDB"]
+|   },
+|   {
+|     _id: 4,
+|     name: "Deepa",
+|     dept: "Finance",
+|     city: "Pune",
+|     salary: 52000,
+|     skills: ["Excel", "Tally"]
+|   },
+|   {
+|     _id: 5,
+|     name: "Elan",
+|     dept: "IT",
+|     city: "Bengaluru",
+|     salary: 68000,
+|     skills: ["Python", "Docker"]
+|   },
+|   {
+|     _id: 6,
+|     name: "Farida",
+|     dept: "HR",
+|     city: "Delhi",
+|     salary: 48000,
+|     skills: ["Communication", "Recruitment"]
+|   },
+|   {
+|     _id: 7,
+|     name: "Gokul",
+|     dept: "Finance",
+|     city: "Chennai",
+|     salary: 58000,
+|     skills: ["Tally", "Excel"]
+|   },
+|   {
+|     _id: 8,
+|     name: "Hema",
+|     dept: "IT",
+|     city: "Pune",
+|     salary: 82000,
+|     skills: ["MongoDB", "Kubernetes"]
+|   }
+| ])
+switched to db companyDB
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.find({
+|   dept: "IT"
+| }).explain("executionStats")
+{
+  explainVersion: '1',
+  queryPlanner: {
+    namespace: 'companyDB.employees',
+    parsedQuery: { dept: { '$eq': 'IT' } },
+    indexFilterSet: false,
+    optimizationTimeMillis: 0,
+    maxIndexedOrSolutionsReached: false,
+    maxIndexedAndSolutionsReached: false,
+    maxScansToExplodeReached: false,
+    prunedSimilarIndexes: false,
+    winningPlan: { isCached: false, stage: 'EOF' },
+    rejectedPlans: []
+  },
+  executionStats: {
+    executionSuccess: true,
+    nReturned: 0,
+    executionTimeMillis: 0,
+    totalKeysExamined: 0,
+    totalDocsExamined: 0,
+    executionStages: {
+      isCached: false,
+      stage: 'EOF',
+      nReturned: 0,
+      executionTimeMillisEstimate: 0,
+      works: 1,
+      advanced: 0,
+      needTime: 0,
+      needYield: 0,
+      saveState: 0,
+      restoreState: 0,
+      isEOF: 1
+    }
+  },
+  queryShapeHash: '736A0CAA36004E5151167536F5458EFBD2240B6CBB56F776C1D65AE8E25A38E2',
+  command: { find: 'employees', filter: { dept: 'IT' }, '$db': 'companyDB' },
+  serverInfo: {
+    host: 'ac-magamyo-shard-00-02.w5gnhat.mongodb.net',
+    port: 27017,
+    version: '8.0.37',
+    gitVersion: '8ece10cbfc3379404a0dffdfb448b9e873b494f7'
+  },
+  serverParameters: {
+    internalQueryFacetBufferSizeBytes: 104857600,
+    internalQueryFacetMaxOutputDocSizeBytes: 104857600,
+    internalLookupStageIntermediateDocumentMaxSizeBytes: 16793600,
+    internalDocumentSourceGroupMaxMemoryBytes: 104857600,
+    internalQueryMaxBlockingSortMemoryUsageBytes: 33554432,
+    internalQueryProhibitBlockingMergeOnMongoS: 0,
+    internalQueryMaxAddToSetBytes: 104857600,
+    internalDocumentSourceSetWindowFieldsMaxMemoryBytes: 104857600,
+    internalQueryFrameworkControl: 'trySbeRestricted',
+    internalQueryPlannerIgnoreIndexWithCollationForRegex: 1
+  },
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1794987196, i: 14 }),
+    signature: {
+      hash: Binary.createFromBase64('228+Gk2jmZlbwEvn4uQepNXh6Gc=', 0),
+      keyId: Long('7652370014699257859')
+    }
+  },
+  operationTime: Timestamp({ t: 1794987196, i: 14 })
+}
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
+|   { dept: 1 }
+| )
+dept_1
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
+|   { dept: 1, salary: -1 }
+| )
+dept_1_salary_-1
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
+|   { skills: 1 }
+| )
+skills_1
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.runCommand({
+|   collMod: "employees",
+|   index: {
+|     name: "skills_1",
+|     hidden: true
+|   }
+| })
+{
+  hidden_old: false,
+  hidden_new: true,
+  ok: 1,
+  '$clusterTime': {
+    clusterTime: Timestamp({ t: 1794987242, i: 11 }),
+    signature: {
+      hash: Binary.createFromBase64('y/XS1DUTkWAaQ2BtKyIn1CdBjm0=', 0),
+      keyId: Long('7652370014699257859')
+    }
+  },
+  operationTime: Timestamp({ t: 1794987242, i: 11 })
+}
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
+|   { city: 1 },
+|   { unique: true }
+| )
+city_1
+Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { dept: 1 }, name: 'dept_1' },
+  { v: 2, key: { dept: 1, salary: -1 }, name: 'dept_1_salary_-1' },
+  { v: 2, key: { skills: 1 }, name: 'skills_1', hidden: true },
+  { v: 2, key: { city: 1 }, name: 'city_1', unique: true }
+]
