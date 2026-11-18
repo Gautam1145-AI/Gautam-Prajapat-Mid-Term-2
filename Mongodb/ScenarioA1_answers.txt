@@ -72,6 +72,9 @@ Atlas atlas-hlruvh-shard-0 [primary] shop> use shopDB
 |   }
 | ])
 switched to db shopDB
+
+Requirement 1
+Change the price of the product "Keyboard" to 1400 using $set.
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.updateOne(
 |   { name: "Keyboard" },
 |   { $set: { price: 1400 } }
@@ -83,6 +86,9 @@ Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.updateOne(
   modifiedCount: 0,
   upsertedCount: 0
 }
+
+Requirement 2
+Add 25 units to the stock of "Wireless Mouse" using $inc.
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.updateOne(
 |   { name: "Wireless Mouse" },
 |   { $inc: { stock: 25 } }
@@ -94,6 +100,9 @@ Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.updateOne(
   modifiedCount: 0,
   upsertedCount: 0
 }
+
+Requirement 3
+Remove the obsolete field oldCode from every product using $unset.
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.updateMany(
 |   {},
 |   { $unset: { oldCode: "" } }
@@ -105,6 +114,9 @@ Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.updateMany(
   modifiedCount: 0,
   upsertedCount: 0
 }
+
+Requirement 4
+Replace the complete document of _id: 3 (USB Cable) with a new document.
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.replaceOne(
 |   { _id: 3 },
 |   {
@@ -122,14 +134,23 @@ Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.replaceOne(
   modifiedCount: 0,
   upsertedCount: 0
 }
+
+Requirement 5
+Delete the single product named "Old Floppy Drive".
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.deleteOne(
 |   { name: "Old Floppy Drive" }
 | )
 { acknowledged: true, deletedCount: 0 }
+
+Requirement 6
+Delete all remaining products that are marked discontinued: true.
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.deleteMany(
 |   { discontinued: true }
 | )
 { acknowledged: true, deletedCount: 0 }
+
+Requirement 7
+Using aggregation, consider only products with price 500 or more, show for each category the total stock and average price. The category with the highest total stock must appear first.
 Atlas atlas-hlruvh-shard-0 [primary] shopDB> db.products.aggregate([
 |   {
 |     $match: {
