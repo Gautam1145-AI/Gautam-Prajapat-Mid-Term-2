@@ -67,6 +67,9 @@ Atlas atlas-hlruvh-shard-0 [primary] shopDB> use companyDB
 |   }
 | ])
 switched to db companyDB
+
+Requirement 1
+Run explain("executionStats") for the query that finds all employees of the IT department. Note the stage used and the number of documents examined.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.find({
 |   dept: "IT"
 | }).explain("executionStats")
@@ -134,18 +137,31 @@ Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.find({
   },
   operationTime: Timestamp({ t: 1794987196, i: 14 })
 }
+
+Requirement 2
+Create a single-field index on dept and run the same query again.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
 |   { dept: 1 }
 | )
 dept_1
+
+Requirement 3
+Create a compound index on dept (ascending) and salary (descending), then run the same query and explain the plan.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
 |   { dept: 1, salary: -1 }
 | )
 dept_1_salary_-1
+
+Requirement 4
+Create an index on the skills array and find all employees who know MongoDB.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
 |   { skills: 1 }
 | )
 skills_1
+
+
+Requirement 5
+Hide the skills_1 index, run the same query again to see the effect, and then unhide the index.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.runCommand({
 |   collMod: "employees",
 |   index: {
@@ -166,11 +182,18 @@ Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.runCommand({
   },
   operationTime: Timestamp({ t: 1794987242, i: 11 })
 }
+
+
+Requirement 6
+Try to create a unique index on city. Read the error and then create a unique index on a suitable field.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.createIndex(
 |   { city: 1 },
 |   { unique: true }
 | )
 city_1
+
+Requirement 7
+List all indexes of the collection.
 Atlas atlas-hlruvh-shard-0 [primary] companyDB> db.employees.getIndexes()
 [
   { v: 2, key: { _id: 1 }, name: '_id_' },
